@@ -1,21 +1,41 @@
-// ℹ️ Gets access to environment variables/settings
-// https://www.npmjs.com/package/dotenv
-require('dotenv').config()
+const express = require('express');
+const mongoose = require('mongoose');
+const authRoutes = require('./routes/authRoutes');
+const taskRoutes = require('./routes/taskRoutes');
+const authMiddleware = require('./middleware/authMiddleware');
 
-// Handles http requests (express is node js framework)
-// https://www.npmjs.com/package/express
-const express = require('express')
+const app = express();
+app.use(express.json());
+mongoose.connect('mongodb://localhost/taskManagerDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
-const app = express()
+app.use('/api/auth', authRoutes);
+app.use('/api/tasks', taskRoutes);
 
-// ℹ️ This function is getting exported from the config folder. It runs most pieces of middleware
-require('./config')(app)
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
-// 👇 Start handling routes here
-const indexRoutes = require('./routes/index.routes')
-app.use('/api', indexRoutes)
+/* const express = require('express');
+const app = express();
+const dotenv = require('dotenv');
+dotenv.config();
 
-// ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
-require('./error-handling')(app)
+// Middleware
+app.use(express.json());
 
-module.exports = app
+// Routes
+app.use('/api/auth', require('./routes/authRoutes'));
+// Add other routes (e.g., taskRoutes) as needed
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+}); */ 
+
