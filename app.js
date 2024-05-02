@@ -1,51 +1,22 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const authRoutes = require('./routes/authRoutes');
-const taskRoutes = require('./routes/taskRoutes');
-require('dotenv').config(); // Load dotenv to access environment variables
 
-const app = express();
-app.use(express.json());
+// ℹ️ Gets access to environment variables/settings
+// https://www.npmjs.com/package/dotenv
+require('dotenv').config()
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/taskManagerDB', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    console.log('MongoDB connected');
-}).catch((err) => {
-    console.error('MongoDB connection error', err);
-    process.exit(1); // Exit process with failure
-});
+// Handles http requests (express is node js framework)
+// https://www.npmjs.com/package/express
+const express = require('express')
 
-app.use('/api/auth', authRoutes);
-app.use('/api/tasks', taskRoutes);
+const app = express()
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// ℹ️ This function is getting exported from the config folder. It runs most pieces of middleware
+require('./config')(app)
 
+// 👇 Start handling routes here
+const indexRoutes = require('./routes/index.routes')
+app.use('/api', indexRoutes)
 
-/* const express = require('express');
-const app = express();
-const dotenv = require('dotenv');
-dotenv.config();
+// ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
+require('./error-handling')(app)
 
-// Middleware
-app.use(express.json());
-
-// Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-// Add other routes (e.g., taskRoutes) as needed
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-}); */ 
-
+module.exports = app
