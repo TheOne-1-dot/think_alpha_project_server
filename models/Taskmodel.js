@@ -34,6 +34,6 @@ const taskSchema = new Schema(
   }
 );
 
-const Book = model('Book', bookSchema)
+const Task = model('Task', taskSchema)
 
-module.exports = Book
+module.exports = Task;
