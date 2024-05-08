@@ -31,7 +31,7 @@ router.post('/login', async (req,res) => {
         const user = await User.findOne({ email });
         //if true => check password
         if (user) {
-            const isMatch = bcrypt.compareSync(password, user.password);
+            const isMatch = bcrypt.compareSync(password, user.hashedpassword);
             // if good password, sign JWT
             if (isMatch) {
                 const token = jwt.sign({ id: user._id }, secret, { expiresIn: '1h'});
